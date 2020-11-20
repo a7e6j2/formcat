@@ -1,0 +1,14 @@
+[2005-01-05]
+* fix a bug from formcat.class.php and block.catform.php,put the genenrated scripts 
+above the <form> instead of <head>.             (joey,thanks for Ganesh).
+
+* cancel case-sensitivity in attributes of formcat tags.(joey)
+
+[2005-01-04]
+* fix some bugs from validators.(joey)
+* modify the validator "isFileSize". (joey)
+
+[2005-01-01]
+
+* add the block tags "catform". make it can process multi-forms.(joey)
+* delveoped the version to make the expansion easily from "Lite version" (joey)

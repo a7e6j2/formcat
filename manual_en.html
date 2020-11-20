@@ -1,0 +1,539 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Formcat Manual [editor:joey]</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: #333333;
+	font-size: 10pt;
+}
+
+</style>
+</head>	
+
+<body>
+<p><font size="6"><strong> Formcat class for PHP<br>
+  </strong></font>V1.01 Jan 2005 (c) 2005 Joey Wong (joey@163.com)[MSN:gzjoey@hotmail.com]<br>
+  <font color="#666666" size="-3">This software is dual licensed using BSD-Style 
+  and LGPL. This means you can use it in compiled proprietary and commercial products.</font></p>
+<p><strong>Useful Link: <a href="http://www.justto.com/formcat/" target="_blank">Formcat 
+  Offical site</a> &nbsp; &nbsp;<a href="http://smarty.php.net"> Smarty Template 
+  Environment</a><a href="http://www.justto.com/formcat/" target="_blank"></a> 
+  &nbsp; &nbsp;<a href="http://www.phpinsider.com/php/code/SmartyValidate/" target="_blank">SmartyValidate</a></strong></p>
+<p><br>
+  <a href="#Introduction">Introduction</a><br>
+  <a href="#i">I.Getting Started.</a><br>
+  <a href="#1">1.What is Formcat</a><br>
+  <a href="#2">2.Requirments</a><br>
+  <a href="#3">3.Installation</a><br>
+  <a href="#4">4.A simple example</a><br>
+  <br>
+  <a href="#ii">II.Formcat in the template</a><br>
+  <a href="#5">5.Synopsis</a><br>
+  <a href="#6">6.Validators</a><br>
+  <a href="#6dot1">6.1 notEmpty</a><br>
+  <a href="#6dot2">6.2 isRange</a><br>
+  <a href="#6dot3">6.3 isLength</a><br>
+  <a href="#6dot4">6.4 cboxChecked</a><br>
+  <a href="#6dot5">6.5 radioChecked</a><br>
+  <a href="#6dot6">6.6 isSelected</a><br>
+  <a href="#6dot7">6.7 isEmail</a><br>
+  <a href="#6dot8">6.8 isInt</a><br>
+  <a href="#6dot9">6.9 isFloat</a><br>
+  <a href="#6dot10">6.10 isDate</a><br>
+  <a href="#6dot11">6.11 isURL</a><br>
+  <a href="#6dot12">6.12 isEqual</a><br>
+  <a href="#6dot13">6.13 isFileSize</a><br>
+  <a href="#6dot14">6.14 isFileType</a><br>
+  <a href="#6dot15">6.15 dateCompare</a><br>
+  <a href="#6dot16">6.16 isRestrict</a><br>
+  <a href="#6dot17">6.17 isRegExp</a><br>
+  <br>
+  <a href="#iii">III.Formcat in PHP</a><br>
+  <a href="#7">7.Synopsis</a><br>
+  <a href="#8">8.Add customizing script into a form validating function.</a><br>
+  <br>
+  <a href="#iv">IV. Customizing validator</a><br>
+  <a href="#9">9.Synopsis</a><br>
+  <a href="#10">10.Expand the Formcat</a><br>
+  <a href="#v"><br>
+  V. Credits</a><br>
+  <a href="#vi">VI. Copyrights</a></p>
+<hr size="1" noshade>
+<a name="Introduction"></a><br>
+<strong><font size="4">Introduction </font></strong> 
+<p>Formcat 1.01 is a class for form validation in client-side.Its design goal 
+  is to generate the javascript for client-side validation as easy and flexible 
+  as possible.It runs on Smarty as a powerful plug-in.</p>
+<p>Formcat is a part of PigCat PHP Development Framework(have notreleased yet).Formcat 
+  only runs on Smarty Template Environment.<br>
+  if you have not know the smarty.please visit http://smarty.php.net. Formcat 
+  has no function for server-side validation.I suggest to use the SmartyValidate 
+  for server-side validation. <br>
+</p>
+<hr size="1" noshade>
+<p><font size="4"><strong>I.Getting Started.</strong></font><strong><a name="i" id="i"></a></strong><br>
+  <br>
+  <strong><font size="4">1. What is Formcat</font></strong> <a name="1" id="1"></a><br>
+  <br>
+  &quot;Formcat&quot;,it's smarty cat,a plug-in for form validation in client-side.You 
+  don't need to program the scripts to validate the input data from the form after 
+  using the &quot;Formcat&quot;.<br>
+  <br>
+  &quot;Say good-bye to the tedious and time-consuming task, Formcat go!&quot;.</p>
+<p><strong><font size="4">2. Requirements: <a name="2" id="2"></a></font></strong></p>
+<p> You must enable session management prior to using Formcat . Do this by calling 
+  session_start() at the top of your PHP application.</p>
+<p>Formcat also requires the Smarty template environment. <br>
+  <br>
+  <font size="4"><strong>3. Installation: </strong></font><a name="3" id="3"></a><br>
+  <br>
+  To install Formcat:</p>
+<p> * Copy the 'formcat.class.php' file and &quot;validators&quot; directory(lite 
+  version don't need to do that)to a place within your php_include path (or use 
+  absolute pathnames when including.)</p>
+<p> * Copy all of the plugins to your Smarty plugin directory.(located in the 
+  plugins/ directory of the distribution.)<br>
+  <br>
+  <font size="4"><strong>4. A simple example:</strong></font> <a name="4" id="4"></a><br>
+  <br>
+  Here is a full working example of how to use Formcat,Now let's see what <br>
+  <br>
+  the Formcat performs:<br>
+  <br>
+  <strong>index.tpl (0riginal)<br>
+  ========================</strong><br>
+  <br>
+  &lt;form name=&quot;formReg&quot; action=&quot;register.php&quot; method=&quot;POST&quot;&gt;<br>
+  Username : &lt;input type=&quot;text&quot; name=&quot;username&quot;&gt;&lt;br&gt;<br>
+  Password : &lt;input type=&quot;password&quot; name=&quot;pwd&quot;&gt;&lt;br&gt;<br>
+  Confirm Password : &lt;input type=&quot;password&quot; name=&quot;pwd2&quot;&gt;&lt;br&gt;<br>
+  Email: &lt;input type=&quot;text&quot; name=&quot;email&quot;&gt;&lt;br&gt;<br>
+  &lt;center&gt;&lt;input type=&quot;submit&quot;&gt;&lt;/center&gt;<br>
+  &lt;/form&gt;<br>
+  <br>
+  <br>
+  <strong>index.tpl (processed by Formcat)<br>
+  ===================================</strong><br>
+  <strong>{catform form=&quot;formReg&quot;}</strong><br>
+  &lt;form name=&quot;formReg&quot; action=&quot;register.php&quot; method=&quot;POST&quot;&gt;<br>
+  Username : &lt;input type=&quot;text&quot; name=&quot;username&quot;&gt;<br>
+  <strong>{formcat check=&quot;notEmpty&quot; field=&quot;username&quot; message=&quot;You 
+  MUST input username.&quot;}</strong><br>
+  &lt;br&gt;<br>
+  Password : &lt;input type=&quot;password&quot; name=&quot;pwd&quot;&gt;<br>
+  <strong>{formcat check=&quot;notEmpty&quot; field=&quot;pwd&quot; message=&quot;You 
+  MUST input password.&quot;}</strong><br>
+  &lt;br&gt; <br>
+  Confirm Password : &lt;input type=&quot;password&quot; name=&quot;pwd2&quot;&gt;<br>
+  <strong>{formcat check=&quot;notEmpty&quot; field=&quot;pwd2&quot; message=&quot;You 
+  MUST input confirm password.&quot;}<br>
+  {formcat check=&quot;isEqual&quot; field=&quot;pwd&quot; field2=&quot;pwd2&quot; 
+  message=&quot;The password Must be same as the confirm password&quot;}</strong><br>
+  &lt;br&gt;<br>
+  Email: &lt;input type=&quot;text&quot; name=&quot;email&quot;&gt;<br>
+  <strong>{formcat check=&quot;isEmail&quot; field=&quot;email&quot; message=&quot;You 
+  should input a valid email address&quot;}</strong><br>
+  &lt;br&gt;<br>
+  &lt;center&gt;&lt;input type=&quot;submit&quot;&gt;&lt;/center&gt;<br>
+  &lt;/form&gt;<br>
+  <strong>{/catform}<br>
+  </strong><br>
+  <br>
+  <strong>index.php<br>
+  =======================================</strong><br>
+  &lt;?php<br>
+  <strong>session_start();</strong></p>
+<p> // you will need to setup Smarty if<br>
+  // the defaults are not correct.</p>
+<p> require('Smarty.class.php');<br>
+  <strong>require('formcat/formcat.class.php');</strong><br>
+  <br>
+  $smarty =&amp; new Smarty;<br>
+  <strong>$fc = new formcat;<br>
+  $smarty-&gt;register_outputfilter(array(&amp;$fc,'fcOutputFilter'));</strong><br>
+  $smarty-&gt;display('form.tpl');</p>
+<p> You can view the source of outputed HTML,the validating javascript has been 
+  generated.</p>
+<hr size="1" noshade>
+<p><strong><font size="4">II.Formcat in the template</font></strong><a name="ii"></a><br>
+  <br>
+  <font size="4"><strong>5. Synopsis: <a name="5"></a></strong></font></p>
+<p> All formcat operations in the template are realized using the <strong>{catform}{/catform}</strong> 
+  and<strong> {formcat} t</strong>ags. </p>
+<p> <strong>{catform}{/catform}</strong> is a container tags.In order to identify 
+  the multi-forms.though there 's only one form,you still use them.</p>
+<p> <strong>{catform form=&quot;formname&quot;}.....{/catform}</strong><br>
+  <br>
+  Correspondence<strong> {formcat ...} </strong>validator tags must contain in 
+  <strong>{catform}...{/catform}</strong> tags<br>
+  <br>
+  <br>
+  <strong><font size="4">6. Validators: <a name="6"></a></font></strong></p>
+<p> Validators tags are completely by <strong>{formcat ...} </strong>as opening. 
+  There're required attributes to a <strong>{formcat ...}</strong>.But each validator 
+  tags has different attributes.Majority,All validator tags attributes almost 
+  have <font color="#990000"><strong>&quot;check&quot;</strong></font>,<strong><font color="#990000">&quot;field&quot;</font></strong>,<strong><font color="#990000">&quot;message&quot; 
+  </font></strong>and <font color="#990000"><strong>&quot;focus&quot;</strong></font>. 
+  except &quot;isDate&quot; and &quot;dateCompare&quot;.they has other attributes 
+  but still has &quot;check&quot; attribute.</p>
+<p> <strong>&quot;field&quot;</strong> - is the form field the validation will 
+  validate.<br>
+  <br>
+  <strong>&quot;check&quot;</strong> - is the validation criteria.<br>
+  <strong><br>
+  &quot;message&quot;</strong> - the message that will be displayed when an error 
+  occurs.<br>
+  <br>
+  <strong>&quot;focus&quot;</strong> - optional attribute.default is TRUE.focus 
+  the input element when an error occurs.<br>
+  (using javascript's .focus())<br>
+  <br>
+  <strong>Now let's take a tour for Formcat validators:</strong></p>
+<p> <strong>6.1 notEmpty</strong> <a name="6dot1"></a><br>
+  <br>
+  &quot;notEmpty&quot;: field is not empty.<br>
+  <br>
+  eg: <strong>{formcat check=&quot;notEmpty&quot; field=&quot;fieldname&quot; 
+  message=&quot;...&quot;[ focus=&quot;false&quot;]}<br>
+  </strong></p>
+<p><strong><br>
+  6.2 isRange<a name="6dot2"></a><br>
+  <br>
+  </strong>&quot;isRange&quot;:checks if field is within a given range. &quot;min&quot; 
+  and &quot;max&quot; attributes required.</p>
+<p> eg: <strong>{formcat check=&quot;isRange&quot; field=&quot;fieldname&quot; 
+  min=&quot;3&quot; max=&quot;8&quot; message=&quot;...&quot; [ focus=&quot;false&quot;]}</strong></p>
+<p><br>
+  <br>
+  <strong>6.3 isLength</strong><a name="6dot3"></a><br>
+  <br>
+  &quot;isLength&quot;:checks if field is a given length. &quot;min&quot; and 
+  &quot;max&quot; attributes required.<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isLength&quot; field=&quot;fieldname&quot; 
+  min=&quot;5&quot; max=&quot;12&quot; message=&quot;...&quot;[ focus=&quot;false&quot;]}</strong><br>
+</p>
+<p><br>
+  <strong>6.4 cboxChecked</strong><a name="6dot4"></a><br>
+  <br>
+  &quot;cboxChecked&quot;: check if a checkbox has been checked. <br>
+  <br>
+  eg: <strong>{formcat check=&quot;cboxChecked&quot; field=&quot;fieldname&quot; 
+  message=&quot;...&quot;}</strong><br>
+  <br>
+  <strong><font color="#333333">for attention:</font></strong> cboxChecked allow 
+  that &quot;fieldname&quot; is appear as array mode. eg: There are many checkbox 
+  elements,named as &quot;job[]&quot;, the Formcat validator tags will be :{formcat 
+  check=&quot;cboxChecked&quot; field=&quot;jobs[]&quot; message=&quot;must choose 
+  a job title!&quot;}. </p>
+<p><br>
+  <strong>6.5 radioChecked</strong><a name="6dot5"></a><br>
+  <br>
+  &quot;radioChecked&quot;: check if a radio button has been checked.<br>
+  <br>
+  eg: <strong>{formcat check=&quot;radioChecked&quot; field=&quot;fieldname&quot; 
+  message=&quot;...&quot;}</strong><br>
+</p>
+<p> <br>
+  <strong>6.6 isSelected</strong><a name="6dot6"></a><br>
+  <br>
+  &quot;isSelected&quot;: checks if an option has been selected <br>
+  <br>
+  eg: <strong>{formcat check=&quot;isSelected&quot; field=&quot;fieldname&quot; 
+  index=&quot;1&quot; message=&quot;...&quot;}</strong><br>
+  <br>
+  <font color="#990000">Unique attribute:</font><br>
+  <br>
+  <strong>index </strong>- &quot;the starting index of list menu&quot;,the selected 
+  index must high than that.<br>
+  <br>
+  <br>
+  <strong>6.7 isEmail</strong><a name="6dot7"></a><br>
+  <br>
+  &quot;isEmail&quot;: check if field is valid Email address <br>
+  <br>
+  eg: <strong>{formcat check=&quot;isEmail&quot; field=&quot;fieldname&quot; message=&quot;...&quot; 
+  [ focus=&quot;false&quot;]} </strong><br>
+  <br>
+  <strong><br>
+  6.8 isInt</strong><a name="6dot8"></a><br>
+  <br>
+  &quot;inInt&quot; : check if field is an integer value.</p>
+<p> eg: <strong>{formcat check=&quot;isInt&quot; field=&quot;fieldname&quot; message=&quot;...&quot; 
+  [ focus=&quot;false&quot;]}</strong><br>
+  <br>
+  <br>
+  <strong>6.9 isFloat</strong><a name="6dot9"></a><br>
+  <br>
+  &quot;isFloat&quot;: check if field is an float value.<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isFloat&quot; field=&quot;fieldname&quot; message=&quot;...&quot; 
+  [ focus=&quot;false&quot;]}</strong><br>
+  <br>
+  <br>
+  <strong>6.10 isDate</strong><a name="6dot10"></a><br>
+  <br>
+  &quot;isDate&quot;: check if field is valid Date.<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isDate&quot; year=&quot;year field&quot; month=&quot;month 
+  field&quot; day=&quot;day field&quot;}</strong><br>
+  <br>
+  <strong><br>
+  6.11 isURL</strong> <a name="6dot11"></a><br>
+  <br>
+  &quot;isURL&quot;: check if field is valid URL.<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isURL&quot; field=&quot;fieldname&quot; message=&quot;...&quot; 
+  [ focus=&quot;false&quot;]}</strong><br>
+</p>
+<p> <strong>6.12 isEqual</strong><a name="6dot12"></a><br>
+  <br>
+  &quot;isEqual&quot;:checks if two fields are equal in value. &quot;field2&quot; 
+  attribute required.<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isEqual&quot; field=&quot;fieldname1&quot; 
+  field2=&quot;fieldname2&quot; message=&quot;...&quot;[ focus=&quot;false&quot;]}</strong><br>
+  <br>
+  <font color="#990000">Unique attributes:</font><br>
+  <br>
+  <strong>field2 </strong>- &quot;field2&quot; value must be the same as &quot;field&quot; 
+  value.if &quot;focus&quot; is true(default is true),it will<br>
+  be focus on field2<br>
+  <br>
+  <br>
+  <strong>6.13 isFileSize</strong> <a name="6dot13"></a><br>
+  <br>
+  &quot;isFileSize&quot;: checks if an uploaded file is under a given size.(unit:KBytes).</p>
+<p> eg: <strong>{formcat check=&quot;isFileSize&quot; field=&quot;file fieldname&quot; 
+  min=&quot;10&quot; max=&quot;1024&quot; message=&quot;...&quot;[ focus=&quot;false&quot;]}</strong></p>
+<p><font color="#FF0000"><strong><em>Warning: </em></strong></font>&quot;isFileSize&quot; 
+  validator is working with ActiveX object, the &quot;security warning dialog 
+  box&quot; will appeared possibly.<br>
+  Strong recommend that you validate the file size by SmartyValidate or other 
+  server-side validations.<br>
+  <br>
+  <br>
+  <strong>6.14 isFileType</strong><a name="6dot14"></a><br>
+  <br>
+  &quot;isFileType&quot;:checks if an uploaded file is a given type (just checks 
+  the extention name.) Since this is <br>
+  validating an uploaded file.<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isFileType&quot; field=&quot;file fieldname&quot; 
+  type=&quot;jpg,gif,bmp&quot; message=&quot;...&quot;[ focus=&quot;false&quot;]}</strong><br>
+  <br>
+  <font color="#990000">Unique attributes:</font><br>
+  <br>
+  <strong>type</strong> - allow upload file extensions,separate each by comma.<br>
+  <br>
+  <br>
+  <strong>6.15 dateCompare<a name="6dot15"></a></strong></p>
+<p> &quot;dateCompare&quot;: use &quot;after_year&quot;-&quot;after_month&quot;-&quot;after_day&quot; 
+  minus &quot;before_year&quot;-&quot;before_month&quot;-&quot;before_day&quot;<br>
+  if the result &lt; 0 ,return false and show the error message.<br>
+  <br>
+  <strong>if &quot;dateEqual&quot; attribute set TRUE.then the [after_date] must 
+  be the same as the [before_date].</strong><br>
+  <br>
+  <strong>if &quot;compToday&quot; attribute set TRUE then the [before_date] replaced 
+  with TODAY and compare with the [after_date]</strong><br>
+  <br>
+  eg: <strong>{formcat check=&quot;dateCompare&quot; after_year=&quot;yrfield1&quot; 
+  after_month=&quot;mfield1&quot; after_day=&quot;dfield1&quot; before_year=&quot;yrfield2&quot; 
+  <br>
+  before_month=&quot;mfield2&quot; before_day=&quot;dfield2&quot; [dateEqual=&quot;TRUE&quot;] 
+  [compToday=&quot;TRUE&quot;]}</strong><br>
+  <br>
+  <br>
+  <strong>6.16 isRestrict</strong> <a name="6dot16"></a><br>
+  <br>
+  &quot;isRestrict&quot;: check if field has restrict letter.<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isRestrict&quot; field=&quot;fieldname&quot; 
+  restrict=&quot;restrict letters&quot; message=&quot;...&quot;[ focus=&quot;false&quot;]}</strong><br>
+  <br>
+  <font color="#990000"> Unique Attributes:</font><br>
+  <br>
+  <strong>restrict </strong>- restrict letters,for example : you are not allow 
+  the user input email , u can set restrict=&quot;@&quot; .<br>
+  and if you are not allow the data include whitespace , u can set restrict=&quot; 
+  &quot; <br>
+  <br>
+  <font color="#666666"><strong>for attention:</strong></font> there are two special 
+  keywords can be the restrict attribute<br>
+  <br>
+  <strong>&quot;notab&quot;</strong> - escape all the tab (&quot;\t\n\r&quot;)<br>
+  <strong>&quot;specialchars&quot; </strong>- escape all the special char (&gt;&lt;,[]{}?/+=|\\\'\\\&quot;:;~!@#*$%^&amp;()`)<br>
+  <br>
+  <strong>6.17 isRegExp</strong> <a name="6dot17"></a><br>
+  <br>
+  &quot;isRegExp&quot;: checks a field against a regular expression. &quot;expression&quot; 
+  attribute required<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isRegExp&quot; field=&quot;fieldname&quot; 
+  expression=&quot;regex&quot; message=&quot;...&quot;[ reverse=&quot;TRUE&quot; 
+  focus=&quot;false&quot;]}</strong><br>
+  <br>
+  <font color="#990000">Unique Attribute: </font><br>
+  <br>
+  <strong>expression</strong> - regular expression<br>
+  <br>
+  <strong>reverse</strong> - reverse judge.default is FALSE. the inputed data 
+  must escape the &quot;expression&quot;. if set TRUE, the data must match the 
+  &quot;expression&quot;<br>
+  <br>
+  <font color="#FF0000"><em><strong>Warning:</strong></em></font> &quot;expression&quot; 
+  as regular expression pattern.Formcat is using Javascript 's RegExp object to 
+  match the data.To prevent escape by PHP,you should pay attention the expression 
+  formcat.for example:<br>
+  <br>
+  It's a formcat isRegExp validator . to check the inputed data whether match 
+  the regular expression(this example is integer).<br>
+  {formcat check=&quot;isRegExp&quot; field=&quot;item&quot; expression=&quot;\\\b\\\d+\\\b&quot; 
+  reverse=&quot;TRUE&quot; message=&quot;item must be integer&quot;}</p>
+<hr size="1" noshade>
+<p> <font size="4"><strong>III. Formcat in PHP<a name="iii"></a><br>
+  <br>
+  7. Synopsis: <a name="7"></a><br>
+  <br>
+  </strong></font>Most Formcat operations in the PHP Code depend on the &quot;formcat 
+  class&quot;, defined in &quot;formcat.class.php&quot;. <br>
+  <br>
+  In a general way,we start the formcat as following:<font size="4"><strong><br>
+  <br>
+  </strong></font>&lt;?php<br>
+  session_start(); <strong>//don't forget </strong></p>
+<p> require('Smarty.class.php'); <br>
+  require('formcat/formcat.class.php');<br>
+  ....<br>
+  <br>
+  $smarty =&amp; new Smarty; <br>
+  $fc = new formcat; <strong>//create an instance of formcat</strong><br>
+  <br>
+  <strong>//register the formcat::fcOutputFilter as an output filter of Smarty 
+  </strong><br>
+  $smarty-&gt;register_outputfilter(array(&amp;$fc,'fcOutputFilter')); <br>
+  <br>
+  ....<br>
+  $smarty-&gt;display('form.tpl'); <br>
+  <br>
+  ?&gt;<br>
+  <br>
+  <strong><br>
+  Let's review the Formcat starting main steps:</strong><br>
+  <br>
+  <strong>1.You should enable session by calling &quot;session_start();&quot; 
+  at the top of your PHP program.<br>
+  2.You should include the &quot;Smarty class&quot; and &quot;Formcat class&quot; 
+  files.<br>
+  3.Creates instances of Smarty and Formcat.<br>
+  4.Register &quot;Formcat::fcOutputFilter&quot; as an output filter of Smarty</strong><br>
+  <br>
+  If you are the senior developer,you can package them.or creates a new class 
+  to combine them.<br>
+  <br>
+  <strong>8. Add customizing script into a form validating function. <a name="8"></a></strong></p>
+<p> Formcat has many validator criteria which use frequently.However,in some cases,you 
+  may want to include some unique scripts into the main validating function.<br>
+  <br>
+  So far,Formcat has a way to solve it. that's <strong>&quot;addCustomJs()&quot; 
+  </strong>method.<br>
+  <br>
+  <strong>Method:</strong><br>
+  <br>
+  <strong>function addCustomJs($formName,$jsStr)</strong><br>
+  ============================================<br>
+  eg: <br>
+  <br>
+  $customJs = &quot;if(fc['username'].value=='joey'){\n&quot;.<br>
+  &quot;alert('....');\n return false;\n}\n&quot;;<br>
+  <br>
+  <strong>formcat::addCustomJs('frmLogin',$customJs);</strong><br>
+  ------------------------------------------------------------------<br>
+  <br>
+  Add your customizing javascript to the validating function of &quot;$formName&quot;.For 
+  Attention,you only can add Javascript.<br>
+</p>
+<hr size="1" noshade>
+<p><strong><font size="4">IV. Customizing validator: <a name="iv"></a></font></strong></p>
+<p> Formcat 1.01 has two version,one is &quot;PRO version&quot; ,another is &quot;Lite 
+  version&quot;.their unique difference is &quot;Lite version&quot; combine all 
+  functions of validators into &quot;formcat.class.php&quot; but &quot;PRO version&quot;.<br>
+  <br>
+  <strong>10. Expand the formcat:<a name="10"></a></strong></p>
+<p> Building your own custom functions has been easier.Let's see how to.<br>
+  <br>
+  <strong>Formcat's validator functions</strong><br>
+  ===============================<br>
+  <strong>void js_validator_criteriaName(array $params)</strong><br>
+  <br>
+  All attributes passed to template functions from the template are contained 
+  in the <strong>$params</strong> as an <br>
+  associative array. Either access those values directly, e.g. $params['max'] 
+  or use extract($params) <br>
+  to import them into the symbol table. <br>
+  <br>
+  The output (return value) of the function will be generated Javascript <br>
+  <br>
+  <br>
+  <strong>Example:</strong><br>
+  <br>
+  function js_validator_noWhiteSpace($params){<br>
+  extract($params);<br>
+  $message = (empty($message))?sprintf($this-&gt;defaultErrMsg,$field):$message;<br>
+  $focusStr = ($focus===false || $focus=='false' || $focus=='FALSE') ?'':'fc.'.$field.&quot;.focus();\n&quot;;<br>
+  if($field!=''){<br>
+  $str = &quot;\n //check whitespace\n&quot;.<br>
+  &quot;var badChar = \&quot;&quot; &quot;\&quot;\n&quot;.<br>
+  &quot;var i;\n&quot;.<br>
+  &quot;for (i = 0; i &lt; fc['&quot;.$field.&quot;'].value.length; i++){\n&quot;.<br>
+  &quot;var c = fc['&quot;.$field.&quot;'].value.charAt(i);\n&quot;.<br>
+  &quot;if (badChar.indexOf(c)&gt;=0) {\n&quot;.<br>
+  &quot;alert('$message');\n&quot;.<br>
+  $focusStr.&quot;return false;\n&quot;.<br>
+  &quot;}\n}\n&quot;;<br>
+  return $str;<br>
+  }<br>
+  } <br>
+  <br>
+  <br>
+  If you are using &quot;Formcat lite version&quot; just put these code into &quot;formcat.class.php&quot;.Otherwise,you 
+  should create a file which named <strong>&quot;js_validator_criteriaName.php&quot; 
+  </strong>to fill by these code,and copy thefile to the directory<strong> &quot;validators&quot;</strong><br>
+  <br>
+  <strong>The &quot;Formcat&quot; tags will be :</strong><br>
+  <br>
+  <strong>{formcat check=&quot;criteriaName&quot; attributeName=&quot;...&quot; 
+  .......}</strong></p>
+<hr size="1" noshade>
+<p> <font size="4"><strong>V.Credits</strong></font><a name="v"></a><br>
+  <br>
+  Author : <strong>Joey Wong <br>
+  </strong><br>
+  Special thanks:<br>
+  <strong>Charlotte Chan</strong> <br>
+  <strong>Messju Mohr</strong> (from Smarty forum)<br>
+  <strong>Monte Ohrt </strong> (from Smarty forum)<br>
+  <strong>boots</strong> (from Smarty forum)</p>
+<hr size="1" noshade>
+<p><strong><font size="4">VI. Copyrights <a name="vi" id="vi"></a><br>
+  <br>
+  <font size="2">Copyright(c) 2005 JUSTTO.COM and Joey Wong. All rights reserved.</font></font></strong></p>
+<p> This library is free software; you can redistribute it and/or modify it<br>
+  under the terms of the GNU Lesser General Public License as published by<br>
+  the Free Software Foundation; either version 2.1 of the License, or (at<br>
+  your option) any later version.</p>
+<p> This library is distributed in the hope that it will be useful, but WITHOUT<br>
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or<br>
+  FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public<br>
+  License for more details.</p>
+<p><strong><font size="4"> </font></strong></p>
+<p><br>
+</p>
+<p> <br>
+</p>
+</body>
+</html>

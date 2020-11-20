@@ -1,0 +1,486 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Formcat Manual [editor:joey]</title>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<style type="text/css">
+body {font-family: "宋体","Arial Narrow", "Times New Roman"; font-size: 12pt}
+.hl {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 20pt;
+}
+</style>
+</head>	
+
+<body>
+<p><font size="6"><strong> <span class="hl">Formcat class for PHP</span><br>
+  </strong></font>V1.01 Jan 2005 (c) 2005 Joey Wong 黄俊研(joey@163.com)[MSN:gzjoey@hotmail.com]<br>
+  <font color="#666666" size="-3">This software is dual licensed using BSD-Style 
+  and LGPL. This means you can use it in compiled proprietary and commercial products.</font></p>
+<p><strong>链接: <a href="http://www.justto.com/formcat/" target="_blank">Formcat官方网站</a> 
+  &nbsp; &nbsp;<a href="http://smarty.php.net">Smarty官方网站</a>&nbsp; 　<a href="http://www.phpinsider.com/php/code/SmartyValidate/" target="_blank">SmartyValidate</a></strong></p>
+<p><br>
+  <a href="#Introduction">简介</a><br>
+  <a href="#i">I.旅程开始</a><br>
+  <a href="#1">1.什么是Formcat</a><br>
+  <a href="#2">2.需求</a><br>
+  <a href="#3">3.安装<br>
+  </a><a href="#4">4.一个简单范例</a><br>
+  <br>
+  <a href="#ii">II.Formcat应用在模版</a><br>
+  <a href="#5">5.概述</a><br>
+  <a href="#6">6.校验器</a><br>
+  <a href="#6dot1">6.1 notEmpty</a><br>
+  <a href="#6dot2">6.2 isRange</a><br>
+  <a href="#6dot3">6.3 isLength</a><br>
+  <a href="#6dot4">6.4 cboxChecked</a><br>
+  <a href="#6dot5">6.5 radioChecked</a><br>
+  <a href="#6dot6">6.6 isSelected</a><br>
+  <a href="#6dot7">6.7 isEmail</a><br>
+  <a href="#6dot8">6.8 isInt</a><br>
+  <a href="#6dot9">6.9 isFloat</a><br>
+  <a href="#6dot10">6.10 isDate</a><br>
+  <a href="#6dot11">6.11 isURL</a><br>
+  <a href="#6dot12">6.12 isEqual</a><br>
+  <a href="#6dot13">6.13 isFileSize</a><br>
+  <a href="#6dot14">6.14 isFileType</a><br>
+  <a href="#6dot15">6.15 dateCompare</a><br>
+  <a href="#6dot16">6.16 isRestrict</a><br>
+  <a href="#6dot17">6.17 isRegExp</a><br>
+  <br>
+  <a href="#iii">III.Formcat应用于PHP程序</a><br>
+  <a href="#7">7.概述</a><br>
+  <a href="#8">8.增加自定义Javascript到校验函数中</a><br>
+  <br>
+  <a href="#iv">IV. 自定义校验器</a><br>
+  <a href="#9">9.概述</a><br>
+  <a href="#10">10.扩展Formcat</a><br>
+  <a href="#v"><br>
+  V. 作者信息</a><br>
+  <a href="#vi">VI.版权信息</a></p>
+<hr size="1" noshade>
+<a name="Introduction"></a><br>
+<strong><font size="4">简介</font></strong> <br>
+<br>
+Formcat 1.01 是一个类应用于表单客户端校验.设计目的是用户只需要写简单的Formcat标记,繁琐复杂的Javascript则由Formcat自动生成.<br>
+<br>
+Formcat是PigCat PHP Development Framework开发框架(未公开)的一部分.Formcat只运行在Smarty模版引擎环境.<br>
+<br>
+如果你还不认识Smarty,请访问http://smarty.php.net.Formcat不具备服务端校验部分,我强烈建议使用SmartyValidate.
+<hr size="1" noshade>
+<p><font size="4"><strong>I. 旅程开始.</strong></font><strong><a name="i" id="i"></a></strong><br>
+  <br>
+  <strong><font size="4">1. 什么是Formcat</font></strong> <a name="1" id="1"></a><br>
+  <br>
+  &quot;Formcat&quot;,是聪明的小猫,:).一个表单客户端校验插件.当你使用&quot;Formcat&quot;后,你不需要再编写大量的脚本去校验表单输入的内容.<br>
+  <br>
+  &quot;再见了繁琐耗时的任务,Formcat Go Go GO!&quot;.<br>
+</p>
+<p><strong><font size="4">2. 需求: <a name="2" id="2"></a></font></strong></p>
+<p> 你必须启用session.方能正常使用Formcat.在你的PHP程序最上面,使用session_start()启动<br>
+  <br>
+  Formcat也需要Smarty模版引擎环境.<br>
+  <br>
+  <br>
+  <font size="4"><strong>3. 安装: </strong></font><a name="3" id="3"></a><br>
+  <br>
+  安装 Formcat:<br>
+  <br>
+  * 复制&quot;formcat.class.php&quot;文件和&quot;validators&quot; 目录(lite version 不需要复制validator目录)到你程序所能包含的目录中.</p>
+<p> * 复制所有在&quot;plugins&quot;目录的文件到Smarty的plugin目录.<br>
+  <br>
+  <font size="4"><strong>4. 一个简单的范例:</strong></font> <a name="4" id="4"></a><br>
+  <br>
+  以下以一个简单的范例介绍Formcat所表现的能力:<br>
+  <br>
+  <br>
+  <strong>index.tpl (原来文件内容)<br>
+  ========================</strong><br>
+  <br>
+  &lt;form name=&quot;formReg&quot; action=&quot;register.php&quot; method=&quot;POST&quot;&gt;<br>
+  Username : &lt;input type=&quot;text&quot; name=&quot;username&quot;&gt;&lt;br&gt;<br>
+  Password : &lt;input type=&quot;password&quot; name=&quot;pwd&quot;&gt;&lt;br&gt;<br>
+  Confirm Password : &lt;input type=&quot;password&quot; name=&quot;pwd2&quot;&gt;&lt;br&gt;<br>
+  Email: &lt;input type=&quot;text&quot; name=&quot;email&quot;&gt;&lt;br&gt;<br>
+  &lt;center&gt;&lt;input type=&quot;submit&quot;&gt;&lt;/center&gt;<br>
+  &lt;/form&gt;<br>
+  <br>
+  <br>
+  <strong>index.tpl (经过加入Formcat标记)<br>
+  ===================================</strong><br>
+  <strong>{catform form=&quot;formReg&quot;}</strong><br>
+  &lt;form name=&quot;formReg&quot; action=&quot;register.php&quot; method=&quot;POST&quot;&gt;<br>
+  Username : &lt;input type=&quot;text&quot; name=&quot;username&quot;&gt;<br>
+  <strong>{formcat check=&quot;notEmpty&quot; field=&quot;username&quot; message=&quot;You 
+  MUST input username.&quot;}</strong><br>
+  &lt;br&gt;<br>
+  Password : &lt;input type=&quot;password&quot; name=&quot;pwd&quot;&gt;<br>
+  <strong>{formcat check=&quot;notEmpty&quot; field=&quot;pwd&quot; message=&quot;You 
+  MUST input password.&quot;}</strong><br>
+  &lt;br&gt; <br>
+  Confirm Password : &lt;input type=&quot;password&quot; name=&quot;pwd2&quot;&gt;<br>
+  <strong>{formcat check=&quot;notEmpty&quot; field=&quot;pwd2&quot; message=&quot;You 
+  MUST input confirm password.&quot;}<br>
+  {formcat check=&quot;isEqual&quot; field=&quot;pwd&quot; field2=&quot;pwd2&quot; 
+  message=&quot;The password Must be same as the confirm password&quot;}</strong><br>
+  &lt;br&gt;<br>
+  Email: &lt;input type=&quot;text&quot; name=&quot;email&quot;&gt;<br>
+  <strong>{formcat check=&quot;isEmail&quot; field=&quot;email&quot; message=&quot;You 
+  should input a valid email address&quot;}</strong><br>
+  &lt;br&gt;<br>
+  &lt;center&gt;&lt;input type=&quot;submit&quot;&gt;&lt;/center&gt;<br>
+  &lt;/form&gt;<br>
+  <strong>{/catform}<br>
+  </strong><br>
+  <br>
+  <strong>index.php<br>
+  =======================================</strong><br>
+  &lt;?php<br>
+  <strong>session_start();</strong></p>
+<p> // you will need to setup Smarty if<br>
+  // the defaults are not correct.</p>
+<p> require('Smarty.class.php');<br>
+  <strong>require('formcat/formcat.class.php');</strong><br>
+  <br>
+  $smarty =&amp; new Smarty;<br>
+  <strong>$fc = new formcat;<br>
+  $smarty-&gt;register_outputfilter(array(&amp;$fc,'fcOutputFilter'));</strong><br>
+  $smarty-&gt;display('form.tpl');<br>
+  <br>
+  你能查看所输出的页面的HTML源文件,校验Javascript已经生成.</p>
+<hr size="1" noshade>
+<p><strong><font size="4">II.Formcat应用于模版中</font></strong><a name="ii"></a><br>
+  <br>
+  <font size="4"><strong>5. 概述: <a name="5"></a></strong></font><br>
+  <br>
+  Formcat标记主要有两类 <strong>{catform}{/catform}</strong> 和<strong> {formcat} </strong>标记</p>
+<p> <strong>{catform}{/catform}</strong> 是一对容器(Container)标记.主要用于在一个页面中,含有多个表单,识别对应的表单.无论页面上含有一个还是多少个表单,仍然需要使用此对标记.</p>
+<p> <strong>{catform form=&quot;formname&quot;}.....{/catform}</strong><br>
+  <br>
+  对应的校验标记<strong> {formcat ...}</strong>必须在<strong>{catform}...{/catform}</strong> 
+  内 <br>
+  <br>
+  <br>
+  <strong><font size="4">6. 校验器: <a name="6"></a></font></strong></p>
+<p> <br>
+  校验标记全部以<strong>{formcat ...} </strong>作为起始. <strong>{formcat ...}</strong>中还含有很多属性.但每个校验器可能有不同的属性.基本来说,大部分校验器均具备<font color="#990000"><strong>&quot;check&quot;</strong></font>,<strong><font color="#990000">&quot;field&quot;</font></strong>,<strong><font color="#990000">&quot;message&quot; 
+  </font></strong>和<font color="#990000"><strong>&quot;focus&quot;</strong></font>这些属性. 
+  除了比较特别的&quot;isDate&quot;和&quot;dateCompare&quot;这两个校验器.但还是具备&quot;check&quot;这个属性<br>
+  <br>
+  公共属性(基本校验器都具备)</p>
+<p> <strong>&quot;field&quot;</strong> - 指定表单中的哪个元素需要校验<br>
+  <br>
+  <strong>&quot;check&quot;</strong> - 校验器名称.<br>
+  <strong><br>
+  &quot;message&quot;</strong> - 出错信息,当错误发生,会出现这个出错信息.<br>
+  <br>
+  <strong>&quot;focus&quot;</strong> - 可选属性(默认:TRUE).当出现错误时,JAVASCRIPT会把焦点放在&quot;field&quot;指定的元素(using 
+  javascript's .focus())<br>
+  <br>
+  <strong>让我们看看这些校验器:</strong></p>
+<p> <strong>6.1 notEmpty</strong> <a name="6dot1"></a><br>
+  <br>
+  &quot;notEmpty&quot;: 校验输入内容不能为空.<br>
+  <br>
+  eg: <strong>{formcat check=&quot;notEmpty&quot; field=&quot;fieldname&quot; 
+  message=&quot;...&quot;[ focus=&quot;false&quot;]}<br>
+  </strong></p>
+<p><strong><br>
+  6.2 isRange<a name="6dot2"></a><br>
+  <br>
+  </strong>&quot;isRange&quot;:校验输入的内容的值(仅用于数值型). &quot;min&quot; 最小值和&quot;max&quot;最大值必须具备</p>
+<p> eg: <strong>{formcat check=&quot;isRange&quot; field=&quot;fieldname&quot; 
+  min=&quot;3&quot; max=&quot;8&quot; message=&quot;...&quot; [ focus=&quot;false&quot;]}</strong></p>
+<p><br>
+  <br>
+  <strong>6.3 isLength</strong><a name="6dot3"></a><br>
+  <br>
+  &quot;isLength&quot;:校验输入的内容的长度. &quot;min&quot; 最小长度和&quot;max&quot;最大长度属性必须具备.<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isLength&quot; field=&quot;fieldname&quot; 
+  min=&quot;5&quot; max=&quot;12&quot; message=&quot;...&quot;[ focus=&quot;false&quot;]}</strong><br>
+</p>
+<p><br>
+  <strong>6.4 cboxChecked</strong><a name="6dot4"></a><br>
+  <br>
+  &quot;cboxChecked&quot;: 校验是否已选择了checkbox<br>
+  <br>
+  eg: <strong>{formcat check=&quot;cboxChecked&quot; field=&quot;fieldname&quot; 
+  message=&quot;...&quot;}</strong><br>
+  <br>
+  值得注意: cboxChecked允许&quot;fieldname&quot;使用数组方式命名. 例如: 有若干个checkbox命名为&quot;job[]&quot;,而formcat标记可以是:{formcat 
+  check=&quot;cboxChecked&quot; field=&quot;jobs[]&quot; message=&quot;must choose 
+  a job title!&quot;}. </p>
+<p><br>
+  <strong>6.5 radioChecked</strong><a name="6dot5"></a><br>
+  <br>
+  &quot;radioChecked&quot;: 校验是否已选择了Radio button<br>
+  <br>
+  eg: <strong>{formcat check=&quot;radioChecked&quot; field=&quot;fieldname&quot; 
+  message=&quot;...&quot;}</strong><br>
+</p>
+<p> <br>
+  <strong>6.6 isSelected</strong><a name="6dot6"></a><br>
+  <br>
+  &quot;isSelected&quot;: 检验是否选择了下拉菜单的某项<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isSelected&quot; field=&quot;fieldname&quot; 
+  index=&quot;1&quot; message=&quot;...&quot;}</strong><br>
+  <br>
+  <font color="#990000">特定的属性:</font><br>
+  <br>
+  <strong>index </strong>- 开始的菜单索引值,所选项目的索引必须大于这个index值<br>
+  <br>
+  <br>
+  <strong>6.7 isEmail</strong><a name="6dot7"></a><br>
+  <br>
+  &quot;isEmail&quot;: 校验输入的内容的是否为合法的email地址<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isEmail&quot; field=&quot;fieldname&quot; message=&quot;...&quot; 
+  [ focus=&quot;false&quot;]} </strong><br>
+  <br>
+  <strong><br>
+  6.8 isInt</strong><a name="6dot8"></a><br>
+  <br>
+  &quot;inInt&quot; : 校验输入的内容的是否为整数</p>
+<p> eg: <strong>{formcat check=&quot;isInt&quot; field=&quot;fieldname&quot; message=&quot;...&quot; 
+  [ focus=&quot;false&quot;]}</strong><br>
+  <br>
+  <br>
+  <strong>6.9 isFloat</strong><a name="6dot9"></a><br>
+  <br>
+  &quot;isFloat&quot;: 校验输入的内容的是否为浮点数<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isFloat&quot; field=&quot;fieldname&quot; message=&quot;...&quot; 
+  [ focus=&quot;false&quot;]}</strong><br>
+  <br>
+  <br>
+  <strong>6.10 isDate</strong><a name="6dot10"></a><br>
+  <br>
+  &quot;isDate&quot;: 校验输入的内容的是否为合法日期,这个校验器仅为年月日分开成三个下拉菜单而服务.<br>
+  &quot;year&quot;,&quot;month&quot;,&quot;day&quot;分别指向三个下拉菜单的元素.<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isDate&quot; year=&quot;year field&quot; month=&quot;month 
+  field&quot; day=&quot;day field&quot;}</strong><br>
+  <br>
+  <strong><br>
+  6.11 isURL</strong> <a name="6dot11"></a><br>
+  <br>
+  &quot;isURL&quot;: 校验输入的内容的是否为合法的URL<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isURL&quot; field=&quot;fieldname&quot; message=&quot;...&quot; 
+  [ focus=&quot;false&quot;]}</strong><br>
+</p>
+<p> <strong>6.12 isEqual</strong><a name="6dot12"></a><br>
+  <br>
+  &quot;isEqual&quot;:校验field输入的内容和field2输入的内容是否一致.<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isEqual&quot; field=&quot;fieldname1&quot; 
+  field2=&quot;fieldname2&quot; message=&quot;...&quot;[ focus=&quot;false&quot;]}</strong><br>
+  <br>
+  <font color="#990000">特定的属性:</font><br>
+  <br>
+  <strong>field2 </strong>- &quot;field2&quot; 的值必须和&quot;field&quot;的值一致.如果&quot;focus&quot;为TRUE(默认为:true),焦点将放在field2<br>
+  <br>
+  <br>
+  <strong>6.13 isFileSize</strong> <a name="6dot13"></a><br>
+  <br>
+  &quot;isFileSize&quot;:校验上传的文件,文件大小是否在min最小值和max最大值之间.(单位:&quot;B&quot;为字节,&quot;K&quot;为千字节,&quot;M&quot;为兆,&quot;G&quot;为gigabytes)<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isFileSize&quot; field=&quot;file fieldname&quot; 
+  min=&quot;1M&quot; max=&quot;5M&quot; message=&quot;...&quot;[ focus=&quot;false&quot;]}<br>
+  <font color="#FF0000"><strong><em><br>
+  注意: </em></strong></font>&quot;isFileSize&quot; 校验器使用到ActiveX控件,有可能导致用户浏览器出现安全警告,所以强烈建议你尽量减少使用本<br>
+  校验器,取而代之的是SmartyValidate或者其他服务器端的校验过程.<br>
+  <br>
+  </strong><br>
+  <strong>6.14 isFileType</strong><a name="6dot14"></a><br>
+  <br>
+  &quot;isFileType&quot;::校验上传的文件,文件扩展名是否为&quot;type&quot;中的一种.<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isFileType&quot; field=&quot;file fieldname&quot; 
+  type=&quot;jpg,gif,bmp&quot; message=&quot;...&quot;[ focus=&quot;false&quot;]}</strong><br>
+  <br>
+  <font color="#990000">特定的属性:</font><br>
+  <br>
+  <strong>type</strong> - 允许上传的文件类别,以逗号分隔.<br>
+  <br>
+  <br>
+  <strong>6.15 dateCompare<a name="6dot15"></a></strong></p>
+<p> &quot;dateCompare&quot;: 对比日期,用&quot;after_year&quot;-&quot;after_month&quot;-&quot;after_day&quot;减&quot;before_year&quot;-&quot;before_month&quot;-&quot;before_day&quot;<br>
+  如果结果小于0 ,则表示出错,显示错误信息.<br>
+  <br>
+  <strong>如果&quot;dateEqual&quot;属性设为TRUE.那么[after_date]必须和[before_date]一致,即判断两个日期是否为同一日.</strong><br>
+  <br>
+  <strong>如果&quot;compToday&quot;属性设为TRUE.那么[before_date]将被替换成TODAY(当前日期),然后再与[after_date]对比,即<br>
+  判断[after_day]是过去的日子还是未来的日子.<br>
+  </strong><br>
+  eg: <strong>{formcat check=&quot;dateCompare&quot; after_year=&quot;yrfield1&quot; 
+  after_month=&quot;mfield1&quot; after_day=&quot;dfield1&quot; before_year=&quot;yrfield2&quot; 
+  before_month=&quot;mfield2&quot; before_day=&quot;dfield2&quot; [dateEqual=&quot;TRUE&quot;] 
+  [compToday=&quot;TRUE&quot;]}</strong><br>
+  <br>
+  <br>
+  <strong>6.16 isRestrict</strong> <a name="6dot16"></a><br>
+  <br>
+  &quot;isRestrict&quot;: 校验输入的内容的是否含有限制的字符(单个字符)<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isRestrict&quot; field=&quot;fieldname&quot; 
+  restrict=&quot;restrict letters&quot; message=&quot;...&quot;[ focus=&quot;false&quot;]}</strong><br>
+  <br>
+  <font color="#990000"> 特定的属性:</font><br>
+  <br>
+  <strong>restrict </strong>- 限制字母列表.例如:如果你禁止输入email地址,可以使用restrict=&quot;@&quot;,又如:你不希望输入的内容包含空格,则可以使用 
+  <br>
+  　　　　　　restrict=&quot; &quot; <br>
+  <br>
+  还值得注意的是，这个restrict属性还有两个有用的关键字<br>
+  <br>
+  <strong>&quot;notab&quot;</strong> - 限制所有制表符 (&quot;\t\n\r&quot;)<br>
+  <strong>&quot;specialchars&quot; </strong>-　限制大部分特殊符号 (&gt;&lt;,[]{}?/+=|\\\'\\\&quot;:;~!@#*$%^&amp;()`)<br>
+  <br>
+  <strong>6.17 isRegExp</strong> <a name="6dot17"></a><br>
+  <br>
+  &quot;isRegExp&quot;: 校验输入的内容的是否符合expression正则表达式．<br>
+  <br>
+  eg: <strong>{formcat check=&quot;isRegExp&quot; field=&quot;fieldname&quot; 
+  expression=&quot;regex&quot; message=&quot;...&quot;[ reverse=&quot;TRUE&quot; 
+  focus=&quot;false&quot;]}</strong><br>
+  <br>
+  <font color="#990000">Unique Attribute: </font><br>
+  <br>
+  <strong>expression</strong> - 正则表达式<br>
+  <br>
+  <strong>reverse</strong> - 反向运算. 默认为FALSE,输入内容不得与&quot;expression&quot;所指的正则表达式匹配,如果为TRUE,则输入内容必须匹配&quot;expression&quot;所指的正则表达式.<br>
+  <br>
+  <em><font color="#FF0000"><strong>注意: &quot;expression&quot;</strong></font></em> 
+  中的正则表达式.写的时候要注意其形式,因为Formcat是使用javascript的RegExp对象.而且需要逃离PHP的过滤.<br>
+  例如:整数的正则表达式:&quot;\\b\\d+\\b&quot;应该在Formcat tag中写成 {formcat check=&quot;isRegExp&quot; 
+  field=&quot;item&quot; expression=&quot;\\\b\\\d+\\\b&quot; reverse=&quot;TRUE&quot; 
+  message=&quot;item must be integer&quot;}</p>
+<hr size="1" noshade>
+<p> <font size="4"><strong><a name="iii"></a><br>
+  <br>
+  7. Synopsis: <a name="7"></a><br>
+  </strong></font><br>
+  一般来说,在PHP中,我们如下开始Formcat:<font size="4"><strong><br>
+  <br>
+  </strong></font>&lt;?php<br>
+  session_start(); <strong>//don't forget </strong></p>
+<p> require('Smarty.class.php'); <br>
+  require('formcat/formcat.class.php');<br>
+  ....<br>
+  <br>
+  $smarty =&amp; new Smarty; <br>
+  $fc = new formcat; <strong>//create an instance of formcat</strong><br>
+  <br>
+  <strong>//register the formcat::fcOutputFilter as an output filter of Smarty 
+  </strong><br>
+  $smarty-&gt;register_outputfilter(array(&amp;$fc,'fcOutputFilter')); <br>
+  <br>
+  ....<br>
+  $smarty-&gt;display('form.tpl'); <br>
+  <br>
+  ?&gt;<br>
+  <br>
+  <strong><br>
+  让我们回顾一下,Formcat开始的基本步骤</strong>:<br>
+  <br>
+  <strong>1.必须在开头使用&quot;session_start();&quot;开启session.<br>
+  2.包含&quot;Smarty class&quot; and &quot;Formcat class&quot; 文件.<br>
+  3.创建Smarty实例和Formcat实例.<br>
+  4.把&quot;Formcat::fcOutputFilter&quot;声明成Smarty的Output filter.</strong><br>
+  <br>
+  如果你是高级程序员,可以试图把这些步骤包装起来.<br>
+  <br>
+  <strong>8.</strong> <strong>增加自定义Javascript到校验函数中<a name="8"></a></strong></p>
+<p> Formcat具备了经常使用的校验器.但仍然有可能在一些特殊的项目中,需要使用其他与别不同的校验程序.这时你可以使用Formcat的方法<br>
+  <strong>&quot;addCustomJs()&quot;</strong>增加自定义脚本到对应的表单校验主函数中.<br>
+  <br>
+  <br>
+  <strong>方法:</strong><br>
+  <br>
+  <strong>function addCustomJs($formName,$jsStr)</strong><br>
+  ============================================<br>
+  eg: <br>
+  <br>
+  $customJs = &quot;if(fc['username'].value=='joey'){\n&quot;.<br>
+  &quot;alert('....');\n return false;\n}\n&quot;;<br>
+  <br>
+  <strong>formcat::addCustomJs('frmLogin',$customJs);</strong><br>
+  ------------------------------------------------------------------<br>
+  <br>
+  增加自定义脚本到对应的表单(&quot;$formName&quot;)校验主函数中,注意只能使用Javascript</p>
+<hr size="1" noshade>
+<p><strong><font size="4">IV. 自定义校验器: <a name="iv"></a></font></strong></p>
+<p> Formcat 1.01 有两个版本,其一是&quot;PRO version&quot; ,其二是&quot;Lite version&quot;.他们基本是相同,唯一分别是&quot;Lite 
+  version&quot; 包含了所有校验器函数于&quot;formcat.class.php&quot;,所以很轻便,而&quot;PRO version&quot;则把所有校验器函数放置在validators目录,更方便扩充.<br>
+  <br>
+  <strong>10. 扩展formcat:<a name="10"></a></strong></p>
+<p> 很容易简单地扩充Formcat.让我们看看如何做:<br>
+  <br>
+  <strong>Formcat's validator functions</strong><br>
+  ===============================<br>
+  <strong>void js_validator_criteriaName(array $params)</strong><br>
+  <br>
+  所有属性会传回到$params,它作为一个数组形式出现.你可以通过$params['max']或使用extract($params)解包.<br>
+  <br>
+  输出内容(返回值)为生成的JAVASCRIPT<br>
+  <br>
+  <br>
+  <strong>范例:</strong> <br>
+  <br>
+  function js_validator_noWhiteSpace($params){<br>
+  　extract($params);<br>
+  　$message = (empty($message))?sprintf($this-&gt;defaultErrMsg,$field):$message;<br>
+  　$focusStr = ($focus===false || $focus=='false' || $focus=='FALSE') ?'':'fc.'.$field.&quot;.focus();\n&quot;;<br>
+  　if($field!=''){<br>
+  　　$str = &quot;\n //check whitespace\n&quot;.<br>
+  　　&quot;var badChar = \&quot;&quot; &quot;\&quot;\n&quot;.<br>
+  　　&quot;var i;\n&quot;.<br>
+  　　&quot;for (i = 0; i &lt; fc['&quot;.$field.&quot;'].value.length; i++){\n&quot;.<br>
+  　　&quot;var c = fc['&quot;.$field.&quot;'].value.charAt(i);\n&quot;.<br>
+  　　&quot;if (badChar.indexOf(c)&gt;=0) {\n&quot;.<br>
+  　　　　&quot;alert('$message');\n&quot;.<br>
+  　　　　$focusStr.&quot;return false;\n&quot;.<br>
+  　　&quot;}\n}\n&quot;;<br>
+  　　return $str;<br>
+  　}<br>
+  } <br>
+  <br>
+  如果你使用的是 &quot;Formcat lite version&quot;，只需要把校验器函数放入&quot;formcat.class.php&quot;中,相反你必须建立一个文件(以<strong>&quot;js_validator_criteriaName.php&quot;</strong>形式命名)放置代码,然后把文件复制到&quot;validators&quot;目录中.<br>
+  <br>
+  <strong>&quot;Formcat&quot; </strong>校验器标记以如下形式:<br>
+  <br>
+  <strong>{formcat check=&quot;criteriaName&quot; attributeName=&quot;...&quot; 
+  .......}</strong></p>
+<hr size="1" noshade>
+<p> <font size="4"><strong>V.Credits</strong></font><a name="v"></a><br>
+  <br>
+  作者 : <strong>Joey Wong <font size="4"><font size="2">(黄俊研)</font></font><br>
+  </strong><br>
+  特别鸣谢:<br>
+  <strong>Charlotte Chan</strong> <br>
+  <strong>Messju Mohr</strong> (from Smarty forum)<br>
+  <strong>Monte Ohrt </strong> (from Smarty forum)<br>
+  <strong>boots</strong> (from Smarty forum)</p>
+<hr size="1" noshade>
+<p><strong><font size="4">VI. 版权信息<a name="vi" id="vi"></a><br>
+  <br>
+  <font size="2">Copyright(c) 2005 JUSTTO.COM(峻图科技)and Joey Wong(黄俊研). All rights 
+  reserved.</font></font></strong></p>
+<p> This library is free software; you can redistribute it and/or modify it<br>
+  under the terms of the GNU Lesser General Public License as published by<br>
+  the Free Software Foundation; either version 2.1 of the License, or (at<br>
+  your option) any later version.</p>
+<p> This library is distributed in the hope that it will be useful, but WITHOUT<br>
+  ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or<br>
+  FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public<br>
+  License for more details.</p>
+<p><strong><font size="4"> </font></strong></p>
+<p><br>
+</p>
+<p> <br>
+</p>
+</body>
+</html>
