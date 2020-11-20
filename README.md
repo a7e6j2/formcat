@@ -11,8 +11,7 @@ Its design goal is to generate the javascript for client-side
 validation as easy and flexible as possible.It runs on Smarty 
 as a powerful plug-in.
 
-Formcat is a part of PigCat PHP Development Framework(have not
-released yet).Formcat only runs on Smarty Template Environment
+Formcat only runs on Smarty Template Environment
 if you have not know the smarty.please visit http://smarty.php.net
 
 Formcat has no function for server-side validation.I suggest to 
